@@ -9,7 +9,10 @@ RUN wget https://cloud-images.ubuntu.com/releases/bionic/release/ubuntu-18.04-se
 RUN sudo apt-get update
 RUN sudo apt-get install -y qemu-system-misc \
                         cloud-image-utils \
-                        qemu-system-x86-64
+                        qemu-system-x86-64 \
+                        cpio \
+                        rsync \
+                        flex
 
 RUN echo "#cloud-config\npassword: ubuntu\nchpasswd: { expire: False }\nssh_pwauth: True" > $HOME/qemu/user-data.yaml
 
