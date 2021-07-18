@@ -28,6 +28,6 @@ I recommend you go through the lab to understand how it works.
 
 I also play around with opensbi:
  - The lab is focus on: OpenSBI -> U-Boot -> Linux -> Userspace
- - But OpenSBI allows to jump from OpenSBI to Linux. Please check [OpenSBI-Execution on QEMU RISC-V 64-bit](https://github.com/riscv/opensbi/blob/master/docs/platform/qemu_virt.md#execution-on-qemu-risc-v-64-bit). So I give it a shot.
+ - But OpenSBI allows to jump from OpenSBI to Linux. Please check [OpenSBI-Execution on QEMU RISC-V 64-bit](https://github.com/riscv/opensbi/blob/master/docs/platform/qemu_virt.md#execution-on-qemu-risc-v-64-bit).
 
- [My workthrough](walkthough.md)
+ [My workthrough](walkthrough.md)
