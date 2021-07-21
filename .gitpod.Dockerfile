@@ -23,9 +23,9 @@ RUN sudo apt-get install -y qemu-system-misc \
 #         sudo gem install fpm -v 1.4.0
 
 # Download prebuilt image from antmicro data
-RUN wget https://dl.antmicro.com/projects/renode/builds/renode-latest.deb -P /tmp && \
-        sudo dpkg -i /tmp/renode-latest.deb && \
-        rm /tmp/renode-latest.deb
+# RUN wget https://dl.antmicro.com/projects/renode/builds/renode-latest.deb -P /tmp && \
+#         sudo dpkg -i /tmp/renode-latest.deb && \
+#         rm /tmp/renode-latest.deb
 
 RUN echo "#cloud-config\npassword: ubuntu\nchpasswd: { expire: False }\nssh_pwauth: True" > $HOME/qemu/user-data.yaml
 
