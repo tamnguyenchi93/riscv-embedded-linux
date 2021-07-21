@@ -23,7 +23,7 @@ RUN sudo apt-get install -y qemu-system-misc \
 
 # Download prebuilt image from antmicro data
 RUN wget https://dl.antmicro.com/projects/renode/builds/renode-latest.deb -P /tmp && \
-        sudo dpkg -i renode-latest.deb && \
+        sudo dpkg -i /tmp/renode-latest.deb && \
         rm /tmp/renode-latest.deb
 
 RUN echo "#cloud-config\npassword: ubuntu\nchpasswd: { expire: False }\nssh_pwauth: True" > $HOME/qemu/user-data.yaml
