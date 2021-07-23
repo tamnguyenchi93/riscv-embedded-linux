@@ -12,6 +12,15 @@ sudo apt install mono-devel
 
 -
 ```bash
-wget https://github.com/renode/renode/releases/download/v1.12.0/renode_1.12.0_amd64.deb
- sudo dpkg --install renode_1.12.0_amd64.deb 
+wget https://github.com/renode/renode/releases/download/v1.12.0/renode_1.12.0_amd64.deb -P ${WORKING_DIR}
+sudo dpkg --install ${WORKING_DIR}/renode_1.12.0_amd64.deb
 ```
+
+```bash
+git -C ${WORKING_DIR} clone https://github.com/buildroot/buildroot.git
+make -C ${WORKING_DIR}/buildroot beaglev_defconfig
+```
+
+make -C ${WORKING_DIR}/buildroot menuconfig
+  - Toolchain bootlin
+  
