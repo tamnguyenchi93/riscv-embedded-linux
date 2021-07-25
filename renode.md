@@ -1,5 +1,6 @@
 # Renode
-
+- Kill machine
+##
 - Install `mono-complete`
   - https://www.mono-project.com/download/stable/#download-lin
 ```bash
@@ -10,17 +11,13 @@ sudo apt update
 sudo apt install mono-devel
 ```
 
--
 ```bash
 wget https://github.com/renode/renode/releases/download/v1.12.0/renode_1.12.0_amd64.deb -P ${WORKING_DIR}
 sudo dpkg --install ${WORKING_DIR}/renode_1.12.0_amd64.deb
 ```
 
-```bash
-git -C ${WORKING_DIR} clone https://github.com/buildroot/buildroot.git
-make -C ${WORKING_DIR}/buildroot beaglev_defconfig
-```
-
-make -C ${WORKING_DIR}/buildroot menuconfig
-  - Toolchain bootlin
-  
+- Start gdb
+  - https://renode.readthedocs.io/en/latest/debugging/gdb.html
+  ```
+  machine StartGdbServer 3333
+  ```

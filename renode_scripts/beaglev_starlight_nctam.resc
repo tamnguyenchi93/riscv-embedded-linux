@@ -1,0 +1,31 @@
+
+# This script runs OpenSBI, U-Boot and Linux on the BeagleV StarLight platform in Renode
+
+$name?="BeagleV"
+
+$bin?=@Workspace/riscv-embedded-linux/tmp/buildroot/output/build/beaglev-secondboot-2d20047960044308126117ad56bc08a1164e82b2/build/bootloader-BEAGLEV-210525.elf
+#$bin?=@Workspace/riscv-embedded-linux/tmp/buildroot/output/images/fw_payload.elf
+$uboot?=@Workspace/riscv-embedded-linux/tmp/buildroot/output/build/uboot-custom/u-boot
+$linux?=@Workspace/riscv-embedded-linux/tmp/buildroot/output/build/linux-custom/vmlinux
+$fit?=@https://dl.antmicro.com/projects/renode/beaglev--image.fit-s_83025501-3c24fa8a3dd087ac05f6a17399ff2f44f673e1c4
+
+emulation SetSeed 0x1
+
+using sysbus
+mach create $name
+machine LoadPlatformDescription @Workspace/riscv-embedded-linux/renode_scripts/beaglev_starlight_nctam.repl
+emulation SetGlobalSerialExecution True
+
+showAnalyzer uart3
+
+macro reset
+"""
+    sysbus LoadELF $bin
+    # sysbus LoadSymbolsFrom $uboot
+    # sysbus LoadSymbolsFrom $linux
+    # sysbus LoadBinary $fit 0xa0000000
+"""
+runMacro $reset
+
+echo "Script loaded. Now start with with the 'start' command."
+echo ""
