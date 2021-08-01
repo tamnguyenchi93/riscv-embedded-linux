@@ -1,5 +1,6 @@
 # Renode
-
+- Kill machine
+##
 - Install `mono-complete`
   - https://www.mono-project.com/download/stable/#download-lin
 ```bash
@@ -10,7 +11,6 @@ sudo apt update
 sudo apt install mono-devel
 ```
 
--
 ```bash
 wget https://dl.antmicro.com/projects/renode/builds/renode-latest.deb -P ${WORKING_DIR}
 sudo dpkg --install ${WORKING_DIR}/renode-latest.deb 
@@ -27,3 +27,8 @@ make -C ${WORKING_DIR}/buildroot menuconfig
 make -C ${WORKING_DIR}/buildroot world
   
 git -C ${WORKING_DIR} clone https://github.com/renode/renode.git
+- Start gdb
+  - https://renode.readthedocs.io/en/latest/debugging/gdb.html
+  ```
+  machine StartGdbServer 3333
+  ```
