@@ -61,6 +61,11 @@ cd $WORKING_DIR/crosstool-ng
 ./ct-ng clean
 cd -
 ```
+
+- It is worthy to know how to build your own toolchain. But you always can use pre-built arm cross compiler from OS distribute or download from [ARM official release](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
+  - If you use pre-built toolchain, you need to modify [embedded-linux-qemu-env.sh](embedded-linux-qemu-env.sh) to correct value include
+    - `CROSS_COMPILE`: toolchain prefix example `arm-none-eabi-`
+    - `PATH`: your toolchain path
 ## U-Booot
 - Download u-boot-2020.04
 ```bash
@@ -108,7 +113,7 @@ cfdisk sd.img
 
 - Verify image to make sure partitions are created.
 ```bash
-$ fdisk -l disk.img
+$ fdisk -l sd.img
 Disk sd.img: 512 MiB, 536870912 bytes, 1048576 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
@@ -155,22 +160,27 @@ qemu-img resize ~/qemu/ubuntu-18.04-server-cloudimg-amd64.img +128G
 ```
 qemu-system-arm -M vexpress-a9 -m 128M -nographic \
 -kernel $WORKING_DIR/bootloader/u-boot-2020.04/u-boot \
--sd $WORKING_DIR/sd.img \
--nic user
+-sd $WORKING_DIR/sd.img
 ```
 
 ## Linux Kernel
+```bash
 mkdir $WORKING_DIR/kernel
 wget https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-5.5.8.tar.gz -P $WORKING_DIR/kernel
 tar xf $WORKING_DIR/kernel/linux-5.5.8.tar.gz -C $WORKING_DIR/kernel
 
 make -C $WORKING_DIR/kernel/linux-5.5.8 vexpress_defconfig
-make -C $WORKING_DIR/kernel/linux-5.5.8 -j
-
-
+```
+- Make menuconfig to enable kernel log timestamp
+  - CONFIG_PRINTK_TIME
+```
+make -C $WORKING_DIR/kernel/linux-5.5.8 menuconfig
+make -C $WORKING_DIR/kernel/linux-5.5.8 -j8
+```
+```bash
 scp -P 22222 $WORKING_DIR/kernel/linux-5.5.8/arch/arm/boot/zImage ubuntu@localhost:~
 scp -P 22222 $WORKING_DIR/kernel/linux-5.5.8/arch/arm/boot/dts/vexpress-v2p-ca9.dtb ubuntu@localhost:~
-
+```
 
 ```bash
 $ sudo losetup -f --show --partscan sd.img
@@ -206,12 +216,12 @@ qemu-system-arm -M vexpress-a9 -m 128M -nographic \
 -sd $WORKING_DIR/sd.img
 ```
 
-setenv bootargs console=ttyAMA0 earlycon=sbi
+setenv bootargs console=ttyAMA0 earlyprintk=serial
 fatload mmc 0 0x61000000 zImage
 fatload mmc 0 0x62000000 vexpress-v2p-ca9.dtb
 bootz 0x61000000 - 0x62000000
 
-setenv bootargs console=ttyAMA0 earlycon=sbi
+setenv bootargs console=ttyAMA0 earlyprintk=serial
 setenv bootcmd 'fatload mmc 0 0x61000000 zImage; fatload mmc 0 0x62000000 vexpress-v2p-ca9.dtb;bootz 0x61000000 - 0x62000000'
 saveenv
 

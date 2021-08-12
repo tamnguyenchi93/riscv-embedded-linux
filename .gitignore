@@ -1,5 +1,7 @@
 tmp
 labs/embedded-linux-qemu-labs/toolchain/crosstool-ng
 labs/embedded-linux-qemu-labs/toolchain/x-tools
+**/gcc-arm-none-eabi-*
 labs/embedded-linux-qemu-labs/bootloader/u-boot*
 labs/**/*.tar.gz
+**/linux*
