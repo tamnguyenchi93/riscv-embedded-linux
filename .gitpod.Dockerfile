@@ -32,7 +32,6 @@ RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E
 #         sudo dpkg -i /tmp/renode-latest.deb && \
 #         rm /tmp/renode-latest.deb
 
-# wd: { expire: False }\nssh_pwauth: True" > $HOME/qemu/user-data.yaml
-# RUN echo "#cloud-config\npassword: ubuntu\nchpass
+RUN echo "#cloud-config\npassword: ubuntu\nchpasswd: { expire: False }\nssh_pwauth: True" > $HOME/qemu/user-data.yaml
 
 RUN cloud-localds $HOME/qemu/user-data.img $HOME/qemu/user-data.yaml
