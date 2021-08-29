@@ -65,7 +65,7 @@ tar xf ${WORKING_DIR}/v2021.07.tar.gz -C ${WORKING_DIR}
 ```
 - We will choose the configuration for QEMU and U-Boot running in S Mode:
 ```bash
-make -C ${WORKING_DIR}/u-boot-2021.07 a
+make -C ${WORKING_DIR}/u-boot-2021.07 qemu-riscv64_smode_defconfig
 ```
 
 - Config
@@ -91,7 +91,7 @@ make -C ${WORKING_DIR}/u-boot-2021.07 -j8
 ## OpenSBI
 - Clone OpenSBI
 ```bash
-git -C ${WORKING_DIR} clone https://github.com/riscv/opensbi.git 
+git -C ${WORKING_DIR} clone https://github.com/riscv/opensbi.git
 cd ${WORKING_DIR}/opensbi
 git checkout v0.8
 cd -

@@ -227,7 +227,7 @@ make -C $WORKING_DIR/kernel/linux-5.5.8 vexpress_defconfig
 make -C $WORKING_DIR/kernel/linux-5.5.8 menuconfig
 make -C $WORKING_DIR/kernel/linux-5.5.8 -j8
 ```
-## Boot with tftp
+### Boot with tftp
 - Copy linux kernel and dtb file to tftp dir
 ```bash
 sudo cp $WORKING_DIR/kernel/linux-5.5.8/arch/arm/boot/zImage /srv/tftp/

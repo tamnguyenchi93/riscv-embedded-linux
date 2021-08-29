@@ -16,3 +16,4 @@ labs/**/*.tar.gz
 **/thirdparty/*vorbis-tools*
 
 **/buildroot
+**/riscv64*
