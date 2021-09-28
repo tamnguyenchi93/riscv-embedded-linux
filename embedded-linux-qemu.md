@@ -5,6 +5,7 @@ apt-get install -y autoconf automake gdb git libffi-dev zlib1g-dev libssl-dev
 - Export working dir
 ```bash
 export WORKING_DIR=<RootDIR>/labs/embedded-linux-qemu-labs
+export WORKING_DIR=`pwd`/labs/embedded-linux-qemu-labs
 ```
 
 ## Building a cross-compiling toolchain

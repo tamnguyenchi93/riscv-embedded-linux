@@ -23,6 +23,7 @@
 - Export WORKING_DIR varibale
   ```bash
   export WORKING_DIR=/path/to/labs/embedded-linux-renode-labs
+  export WORKING_DIR=`pwd`/labs/embedded-linux-renode-labs
   ```
 - Install Crosstool-NG build dependencies:
   ```bash

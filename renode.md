@@ -67,8 +67,10 @@ connector Connect host.tap switch1
 ```
 ## Renode
 ```bash
-export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u \[\033[00m\]\[\033[01;34m\]\W\[\033[00m\] \$ "
 export WORKING_DIR=<RootDIR>/labs/embedded-linux-renode-labs
+export WORKING_DIR=`pwd`/labs/embedded-linux-renode-labs
+export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u \[\033[00m\]\[\033[01;34m\]\W\[\033[00m\] \$ "
+echo 'export PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u \[\033[00m\]\[\033[01;34m\]\W\[\033[00m\] \$ "' >> ~/.bashrc
 echo "export PATH=$WORKING_DIR/renode/renode:$PATH" >> ~/.bashrc
 ```
 ```
