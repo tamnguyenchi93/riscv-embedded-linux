@@ -1,5 +1,5 @@
 tmp
-**/crosstool-ng
+**/crosstool-ng*
 **/x-tools
 **/gcc-arm-none-eabi-*
 **/u-boot*
