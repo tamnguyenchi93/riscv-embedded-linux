@@ -242,6 +242,12 @@ cd ${WORKING_DIR}/renode/renode
   cp $WORKING_DIR/kernel/data/config $WORKING_DIR/kernel/linux-5.5.8/.config
   ```
 
+  ```
+  wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.9.tar.xz -P $WORKING_DIR/kernel
+  tar xf $WORKING_DIR/kernel/linux-5.14.9.tar.xz -C $WORKING_DIR/kernel
+  cp $WORKING_DIR/kernel/data/config $WORKING_DIR/kernel/linux-5.14.9/.config
+  make -C $WORKING_DIR/kernel/linux-5.14.9 -j8
+  ```
 - Load defconfig file of sifife fu540 under `arch/riscv/`
   ```bash
   make -C $WORKING_DIR/kernel/linux-5.5.8 defconfig
@@ -307,3 +313,51 @@ s @renode_scripts/hifive_unleashed_linux.resc
 [    6.775672] [<ffffffe00003bcf8>] ret_from_exception+0x0/0xc
 [    6.776024] ---[ end Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0) ]---
 ```
+
+## Tiny filesystem
+- Rebuilt kernel linux with `CONFIG_DEVTMPFS_MOUNT`
+  - Make sure you update: new linux kernel into tftp dir or copy to sd card image.
+
+- Get `busybox` source code:
+```bash
+wget https://busybox.net/downloads/busybox-1.33.0.tar.bz2 -P $WORKING_DIR/tinysystem
+tar xf $WORKING_DIR/tinysystem/busybox-1.33.0.tar.bz2 -C $WORKING_DIR/tinysystem
+```
+- Busy-box make menuconfig or use `.config` from lab data
+  - This pre-config file contain action: [labs/embedded-linux-renode-labs/tinysystem/busybox-1.33.config](labs/embedded-linux-renode-labs/tinysystem/busybox-1.33.config)
+     - `CONFIG_PREFIX="../ramdisk"`
+
+```bash
+cp $WORKING_DIR/tinysystem/data/busybox-1.33.config $WORKING_DIR/tinysystem/busybox-1.33.0/.config
+# Config busybox your self
+make -C $WORKING_DIR/tinysystem/busybox-1.33.0 menuconfig
+```
+- Build busybox
+```bash
+make -C $WORKING_DIR/tinysystem/busybox-1.33.0 -j
+make -C $WORKING_DIR/tinysystem/busybox-1.33.0 install
+```
+
+### Work around for gitpod
+- Compress 
+```bash
+cd $WORKING_DIR/tinysystem
+tar cvf ramdisk.tar.gz ramdisk
+cd $WORKING_DIR/../..
+```
+- Start ubuntu
+```bash
+./start-qemu-x86_64.sh
+```
+- Copy `ramdisk.tar.gz` to Ubuntu VM.
+```bash
+scp -P 22222 $WORKING_DIR/tinysystem/ramdisk.tar.gz ubuntu@localhost:~
+```
+
+```
+scp -P 22222 ubuntu@localhost:ramdisk.gz $WORKING_DIR/tinysystem/
+```
+
+setenv bootargs 'root=/dev/ram0 rw init=/linuxrc initrd=0x83000000,0x800000'
+setenv bootargs 'root=/dev/ram0 rw'
+booti 0x82000000 0x83000000:0x800000 0x81000000

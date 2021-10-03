@@ -17,3 +17,4 @@ labs/**/*.tar.gz
 
 **/buildroot
 **/riscv64*
+**/ramdisk*

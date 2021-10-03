@@ -1,0 +1,30 @@
+$name?="hifive-unleashed"
+
+using sysbus
+mach create $name
+machine LoadPlatformDescription @platforms/cpus/sifive-fu540.repl
+
+showAnalyzer uart0
+
+emulation CreateServerSocketTerminal 1235 "uart-con"
+connector Connect sysbus.uart0 uart-con
+
+$bin?=@labs/embedded-linux-renode-labs/bootloader/opensbi/build/platform/sifive/fu540/firmware/fw_payload.elf
+$fdt?=@labs/embedded-linux-renode-labs/kernel/linux-5.5.8/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dtb
+$vmlinux?=@labs/embedded-linux-renode-labs/kernel/linux-5.14.9/arch/riscv/boot/Image
+$rootfs?=@labs/embedded-linux-renode-labs/tinysystem/ramdisk.gz
+
+
+macro reset
+"""
+    sysbus LoadELF $bin
+    sysbus LoadBinary $fdt 0x81000000
+
+    # Load the Linux kernel symbols, as they are not included in the BBL
+    # sysbus LoadSymbolsFrom $vmlinux
+    sysbus LoadBinary $vmlinux 0x82000000
+    sysbus LoadBinary $rootfs 0x83000000
+    # Device tree address is passed as an argument to the BBL
+    # e51 SetRegisterUnsafe 11 0x81000000
+"""
+runMacro $reset
