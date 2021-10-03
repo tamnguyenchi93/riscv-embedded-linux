@@ -164,5 +164,146 @@ cd ${WORKING_DIR}/renode/renode
   ```
 
 - Test with renode:
+  - Start renode
+  ```bash
+  cd $WORKING_DIR
+  renode 
+  ```
+  - Inside renode monitor console:
+  ```
+  s @renode_scripts/hifive_unleashed_uboot.resc
+  ```
+  ```bash
+  Trying 127.0.0.1...
+  Connected to localhost.
+  Escape character is '^]'.
 
+  OpenSBI v0.9
+    ____                    _____ ____ _____
+    / __ \                  / ____|  _ \_   _|
+  | |  | |_ __   ___ _ __ | (___ | |_) || |
+  | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+  | |__| | |_) |  __/ | | |____) | |_) || |_
+    \____/| .__/ \___|_| |_|_____/|____/_____|
+          | |
+          |_|
+
+  Platform Name             : SiFive Freedom U540
+  Platform Features         : timer,mfdeleg
+  Platform HART Count       : 4
+  Firmware Base             : 0x80000000
+  Firmware Size             : 108 KB
+  Runtime SBI Version       : 0.2
+
+  Domain0 Name              : root
+  Domain0 Boot HART         : 4
+  Domain0 HARTs             : 1*,2*,3*,4*
+  Domain0 Region00          : 0x0000000080000000-0x000000008001ffff ()
+  Domain0 Region01          : 0x0000000000000000-0xffffffffffffffff (R,W,X)
+  Domain0 Next Address      : 0x0000000080200000
+  Domain0 Next Arg1         : 0x0000000088000000
+  Domain0 Next Mode         : S-mode
+  Domain0 SysReset          : yes
+
+  Boot HART ID              : 4
+  Boot HART Domain          : root
+  Boot HART ISA             : rv64imafdcs
+  Boot HART Features        : scounteren,mcounteren,time
+  Boot HART PMP Count       : 16
+  Boot HART PMP Granularity : 4
+  Boot HART PMP Address Bits: 54
+  Boot HART MHPM Count      : 0
+  Boot HART MHPM Count      : 0
+  Boot HART MIDELEG         : 0x0000000000000222
+  Boot HART MEDELEG         : 0x000000000000b109
+
+
+  U-Boot 2021.07 (Oct 02 2021 - 15:42:23 +0000)
+
+  CPU:   rv64imac
+  Model: SiFive HiFive Unleashed A00
+  DRAM:  8 GiB
+  MMC:   spi@10050000:mmc@0: 0
+  Loading Environment from SPIFlash... jedec_spi_nor flash@0: unrecognized JEDEC id bytes: 00, 00, 00
+  *** Warning - spi_flash_probe_bus_cs() failed, using default environment
+
+  In:    serial@10010000
+  Out:   serial@10010000
+  Err:   serial@10010000
+  Board serial number should not be 0 !!
+  Net:   sifive-reset reset: failed to get cltx_reset reset
+  ```
 ## Lab 5: Start Linux kernel
+- Clone source code.
+  ```bash
+  mkdir $WORKING_DIR/kernel
+  wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.5.8.tar.gz -P $WORKING_DIR/kernel
+  tar xf $WORKING_DIR/kernel/linux-5.5.8.tar.gz -C $WORKING_DIR/kernel
+  cp $WORKING_DIR/kernel/data/config $WORKING_DIR/kernel/linux-5.5.8/.config
+  ```
+
+- Load defconfig file of sifife fu540 under `arch/riscv/`
+  ```bash
+  make -C $WORKING_DIR/kernel/linux-5.5.8 defconfig
+  ```
+- Make menuconfig
+  - CONFIG_PRINTK_TIME
+  - Enable ramdisk support:
+    - https://linuxlink.timesys.com/docs/classic/configuring_the_kernel_to_support_ram_disks
+    - Block devices, enable the RAM disk support option. This sets `CONFIG_BLK_DEV_RAM=y`
+    - Config ramcount = 8 and ramsize = 
+  ```
+  make -C $WORKING_DIR/kernel/linux-5.5.8 menuconfig
+  make -C $WORKING_DIR/kernel/linux-5.5.8 -j8
+  ```
+
+### Test with renode:
+- Start renode
+```bash
+cd $WORKING_DIR
+renode 
+```
+- Inside renode monitor console:
+```
+s @renode_scripts/hifive_unleashed_linux.resc
+```
+- Uboot concole. Stop auto boot and run command below
+  ```
+  booti 0x82000000 - 0x81000000
+  ```
+- You should expect the linux kernel start and print early log but final kernel fails to start because it can't find root fs.
+```
+[    6.765263] VFS: Cannot open root device "(null)" or unknown-block(0,0): error -6
+[    6.765861] Please append a correct "root=" boot option; here are the available partitions:
+[    6.766418] 0100            8192 ram0 
+[    6.766432]  (driver?)
+[    6.766982] 0101            8192 ram1 
+[    6.766996]  (driver?)
+[    6.767546] 0102            8192 ram2 
+[    6.767560]  (driver?)
+[    6.768030] 0103            8192 ram3 
+[    6.768124]  (driver?)
+[    6.768630] 0104            8192 ram4 
+[    6.768630]  (driver?)
+[    6.769238] 0105            8192 ram5 
+[    6.769252]  (driver?)
+[    6.769872] 0106            8192 ram6 
+[    6.769887]  (driver?)
+[    6.770436] 0107            8192 ram7 
+[    6.770451]  (driver?)
+[    6.770930] DEBUG_BLOCK_EXT_DEVT is enabled, you need to specify explicit textual name for "root=" boot option.
+[    6.771570] Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
+[    6.772125] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.5.8 #1
+[    6.772428] Call Trace:
+[    6.772718] [<ffffffe00003d094>] walk_stackframe+0x0/0xaa
+[    6.773041] [<ffffffe00003d35e>] show_stack+0x2a/0x34
+[    6.773371] [<ffffffe00065018c>] dump_stack+0x6c/0x86
+[    6.773697] [<ffffffe0000420b8>] panic+0xe6/0x258
+[    6.774016] [<ffffffe000000fe0>] mount_block_root+0x178/0x1f2
+[    6.774346] [<ffffffe00000128a>] mount_root+0x10e/0x124
+[    6.774671] [<ffffffe0000013da>] prepare_namespace+0x13a/0x17e
+[    6.775004] [<ffffffe000000c16>] kernel_init_freeable+0x152/0x16e
+[    6.775340] [<ffffffe0006650b6>] kernel_init+0x12/0xf0
+[    6.775672] [<ffffffe00003bcf8>] ret_from_exception+0x0/0xc
+[    6.776024] ---[ end Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0) ]---
+```

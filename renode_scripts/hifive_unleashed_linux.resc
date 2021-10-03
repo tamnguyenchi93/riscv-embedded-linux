@@ -5,6 +5,7 @@ mach create $name
 machine LoadPlatformDescription @platforms/cpus/sifive-fu540.repl
 
 showAnalyzer uart0
+
 emulation CreateServerSocketTerminal 1235 "uart-con"
 connector Connect sysbus.uart0 uart-con
 
@@ -16,11 +17,11 @@ $vmlinux?=@labs/embedded-linux-renode-labs/kernel/linux-5.5.8/arch/riscv/boot/Im
 macro reset
 """
     sysbus LoadELF $bin
-    # sysbus LoadFdt $fdt 0x81000000 "earlyconsole mem=256M@0x80000000"
+    sysbus LoadBinary $fdt 0x81000000
 
     # Load the Linux kernel symbols, as they are not included in the BBL
     # sysbus LoadSymbolsFrom $vmlinux
-    # sysbus LoadBinary $vmlinux 0x82000000
+    sysbus LoadBinary $vmlinux 0x82000000
 
     # Device tree address is passed as an argument to the BBL
     # e51 SetRegisterUnsafe 11 0x81000000
