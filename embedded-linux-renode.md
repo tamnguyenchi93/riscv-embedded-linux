@@ -148,5 +148,21 @@ cd ${WORKING_DIR}/renode/renode
   ```
 - After compile u-boot binary is at: `${WORKING_DIR}/bootloader/u-boot-2021.07/u-boot.bin`. We can not test uboot right now, we need another bootloader to load 
 ## Lab 4: Build OpenSBI
+- Target build OpenSBI with payload is U-boot
+- Clone OpenSBI
+  ```bash
+  git -C ${WORKING_DIR}/bootloader clone https://github.com/riscv/opensbi.git
+  cd ${WORKING_DIR}/bootloader/opensbi
+  git checkout v0.9
+  cd -
+  ```
+- Check out document of OpenSBI of [Sifive FU540](https://github.com/riscv/opensbi/blob/v0.9/docs/platform/sifive_fu540.md)
+- Build fw_payload.elf file
+  ```bash
+  make -C ${WORKING_DIR}/bootloader/opensbi PLATFORM=sifive/fu540 \
+    FW_PAYLOAD_PATH=${WORKING_DIR}/bootloader/u-boot-2021.07/u-boot.bin
+  ```
+
+- Test with renode:
 
 ## Lab 5: Start Linux kernel
