@@ -11,6 +11,28 @@
 
 
 ## Lab 1: Install Renode.
+- Install `mono-complete`
+  - https://www.mono-project.com/download/stable/#download-lin
+```bash
+sudo apt install gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+sudo apt update
+sudo apt install mono-devel mono-complete
+```
+
+```bash
+wget https://dl.antmicro.com/projects/renode/builds/renode-latest.deb -P ${WORKING_DIR}/renode
+sudo dpkg --install ${WORKING_DIR}/renode/renode-latest.deb
+```
+
+- [Build renode from source](https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html)
+```bash
+git -C ${WORKING_DIR}/renode/ clone https://github.com/renode/renode.git
+cd ${WORKING_DIR}/renode/renode
+./build.sh
+```
+
 ## Lab 2: Prepare RISC-V toolchain.
 - There are some options you can choose:
   - Install from your OS distribute.
